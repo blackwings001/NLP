@@ -1,0 +1,11 @@
+本项目用于测试词向量，词向量是由百科，新闻和小说数据训练而来。
+
+model文件夹下是词向量模型：
+词向量的维度是128维，一共6400505词
+baike_26g_news_13g_novel_229g.model和baike_26g_news_13g_novel_229g.model.trainables.syn1.npy是一起读取的，可以继续训练，加载速度约为100秒
+baike_26g_news_13g_novel_229g.bin是二进制模式，加载速度约为60秒
+baike_26g_news_13g_novel_229g.model.wv.vectors.npy是np矩阵
+
+word_vec_test.py是测试词向量的主程序
+
+word_vector_basic_info.txt是某个词的基本词向量信息
