@@ -10,6 +10,9 @@ STOPWORDS_FILE = os.path.join(BASE_DIR, "Data", "StopWords", "stopWords.txt")   
 ML_MODEL_PATH = os.path.join(BASE_DIR, "Model", "Classify", "FudanNews", "Ml")
 DL_MODEL_PATH = os.path.join(BASE_DIR, "Model", "Classify", "FudanNews", "Dl")
 
+ML_PROCESSED_PATH = os.path.join(BASE_DIR, "Data", "FudanNews", "Ml")
+DL_PROCESSED_PATH = os.path.join(BASE_DIR, "Data", "FudanNews", "Dl")
+
 CATE_LIST = [3,4,5,6,7,11,15,16,17,19,23,29,31,32,34,35,36,37,38,39]
 CATE_DICT = {"C3-Art": 3, "C4-Literature": 4, "C5-Education": 5, "C6-Philosophy": 6,
              "C7-History": 7, "C11-Space": 11, "C15-Energy": 15, "C16-Electronics": 16,

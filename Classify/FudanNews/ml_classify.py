@@ -1,7 +1,7 @@
 """
 Author: guominglei
 Date: 2019-07-09
-Readme: 实用机器学习方法进行文本分类
+Readme: 使用机器学习方法进行文本分类
 """
 from time import time
 from utility import NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, ML_MODEL_PATH
@@ -34,9 +34,9 @@ class MlClassify:
 
                 # 去掉停用词， 建议在数据预处理的时候就去掉停用词
                 # content = " ".join(word for word in content.split() if word not in stop_words)
-
-                self.data_bunch.labels.append(label)
-                self.data_bunch.contents.append(content)
+                if label in ('C11-Space', 'C3-Art', 'C7-History', 'C31-Enviornment', 'C32-Agriculture', "C34-Economy", "C19-Computer", 'C38-Politics', "C39-Sports"):
+                    self.data_bunch.labels.append(label)
+                    self.data_bunch.contents.append(content)
 
                 if i % 1000 == 0:
                     print("使用bunch保存content和label，进度：{:.2f}%".format(i / sum_lines * 100))
@@ -71,7 +71,7 @@ class MlClassify:
 
 
 
-    def train_model(self, model_cate=0, save_model=False):
+    def train_model(self, model_cate=1, save_model=False):
         """
         使用不同的分类器进行分类模型训练
         :param model_cate: 选择不同的分类器
@@ -133,7 +133,7 @@ class MlClassify:
 if __name__ == '__main__':
     mlclassify = MlClassify(NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, ML_MODEL_PATH)
     mlclassify.process_raw_data()
-    mlclassify.process_feature_label(feature_extraction=True)
+    mlclassify.process_feature_label()
     mlclassify.train_model()
     mlclassify.evaluate_result()
 
