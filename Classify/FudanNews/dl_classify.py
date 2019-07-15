@@ -119,7 +119,7 @@ class DlClassify:
 
         net = Network(self.token_words, self.max_lenth, self.output_dim, Y.shape[1])
 
-        model = net.TEXT_CNN_NETWORK()
+        model = net.text_cnn()
         model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=['accuracy'])
         train_history = model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(test_x, test_y))
 
@@ -164,7 +164,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 256
     EPOCHS = 10
 
-    dlclassify = DlClassify(NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, DL_PROCESSED_PATH, process_data=True)
+    dlclassify = DlClassify(NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, DL_PROCESSED_PATH, process_data=False)
     dlclassify.process_raw_data()
     dlclassify.process_feature_label(token_words=TOKEN_WORDS, max_lenth=MAX_LENGTH, output_dim=OUTPUT_DIM)
     dlclassify.train_model(BATCH_SIZE, EPOCHS)
