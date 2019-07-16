@@ -20,7 +20,7 @@ class MlClassify:
         self.data_bunch = Bunch(labels=[], contents=[])
 
 
-    def process_raw_data(self):
+    def process_raw_data(self, statistics=False):
         # 使用bunch保存raw_data中的content和label
         t = time()
 
@@ -40,6 +40,20 @@ class MlClassify:
 
                 if i % 1000 == 0:
                     print("使用bunch保存content和label，进度：{:.2f}%".format(i / sum_lines * 100))
+
+        if statistics:  # 统计词典大小，新闻的平均长度，最大长度等
+            words = set()   # 词典
+            for doc in self.data_bunch.contents:
+                words |= set(doc.split())
+            doc_length = [len(doc) for doc in self.data_bunch.contents]
+
+            import numpy as np
+
+            print("词典大小为: {}".format(len(words)))
+            print("新闻的总数为: {}".format(len(doc_length)))
+            print("新闻的平均长度为: {}".format(sum(doc_length)/len(doc_length)))
+            print("新闻的最大长度为: {}".format(max(doc_length)))
+            print("最长的新闻为: {}".format(self.data_bunch.contents[np.argmax(doc_length)]))
 
         print("使用bunch保存content和label, 完成！用时:{:.2f}s".format(time() - t))
 
@@ -132,7 +146,7 @@ class MlClassify:
 
 if __name__ == '__main__':
     mlclassify = MlClassify(NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, ML_MODEL_PATH)
-    mlclassify.process_raw_data()
+    mlclassify.process_raw_data(statistics=True)
     mlclassify.process_feature_label()
     mlclassify.train_model()
     mlclassify.evaluate_result()

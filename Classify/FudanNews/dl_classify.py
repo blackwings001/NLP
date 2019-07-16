@@ -4,8 +4,9 @@ Date: 2019-07-15
 Readme: 使用深度学习方法进行文本分类，涉及多种网络结构
 """
 import os
+import pickle
+
 from time import time
-from sklearn.externals import joblib
 from sklearn.datasets.base import Bunch
 from utility import NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, DL_MODEL_PATH, DL_PROCESSED_PATH
 
@@ -87,8 +88,9 @@ class DlClassify:
         self.data_bunch.contents_seq = token.texts_to_sequences(self.data_bunch.contents)
         self.data_bunch.contents_seq_pad = sequence.pad_sequences(self.data_bunch.contents_seq, maxlen=max_lenth)
 
-        joblib.dump(self.data_bunch.contents_seq_pad, self.processed_data_file)
-        joblib.dump(self.data_bunch.lables_one_hot, self.processed_data_file)
+        with open(self.processed_data_file, "wb") as f:
+            pickle.dump(self.data_bunch.contents_seq_pad, f)
+            pickle.dump(self.data_bunch.lables_one_hot, f)
 
         print("处理feature和label, 完成！用时:{:.2f}s".format(time() - t))
 
@@ -109,8 +111,9 @@ class DlClassify:
         t = time()
 
         if self.processed_data_exists:
-            X = joblib.load(self.processed_data_file)
-            Y = joblib.load(self.processed_data_file)
+            with open(self.processed_data_file, "rb") as f:
+                X = pickle.load(f)
+                Y = pickle.load(f)
         else:
             X = self.data_bunch.contents_seq_pad
             Y = self.data_bunch.lables_one_hot
@@ -119,9 +122,10 @@ class DlClassify:
 
         net = Network(self.token_words, self.max_lenth, self.output_dim, Y.shape[1])
 
-        model = net.text_cnn()
+        model = net.textrnn_attention()
+
         model.compile(loss="categorical_crossentropy", optimizer="adam", metrics=['accuracy'])
-        train_history = model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(test_x, test_y))
+        train_history = model.fit(train_x, train_y, batch_size=batch_size, epochs=epochs, verbose=2, validation_data=(test_x, test_y))
 
         # 评估模型准确率
         score = model.evaluate(test_x, test_y, verbose=2)
@@ -151,18 +155,16 @@ class DlClassify:
             for key, value in result.items():
                 f.writelines("评价指标为: {}\n{}\n".format(key, value))
     
-    
-    
 
 
 if __name__ == '__main__':
 
-    TOKEN_WORDS = 2000
+    TOKEN_WORDS = 3000
     MAX_LENGTH = 100
     OUTPUT_DIM = 32
 
-    BATCH_SIZE = 256
-    EPOCHS = 10
+    BATCH_SIZE = 512
+    EPOCHS = 100
 
     dlclassify = DlClassify(NEWS_FILE, STOPWORDS_FILE, CATE_LIST, CATE_DICT, DL_PROCESSED_PATH, process_data=False)
     dlclassify.process_raw_data()
